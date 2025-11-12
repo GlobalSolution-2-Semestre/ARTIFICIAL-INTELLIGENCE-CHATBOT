@@ -1,0 +1,77 @@
+ARTIFICIAL INTELLIGENCE & CHATBOT — Global Solution
+
+Integrantes:
+- Pedro Henrique Luiz Alves Duarte — RM563405 TURMA: 1TDSPF
+- Guilherme Macedo Martins         — RM562396 TURMA: 1TDSPF 
+
+Modelos:
+- Classificação: BurnoutRisk (RandomForest)
+- Regressão: ProductivityScore (XGBoost)
+
+A API Flask expõe os endpoints:
+- /predict/burnout-risk
+- /predict/productivity
+
+---------------------------------------------------------EXPLICAÇÕES PERTINENTES----------------------------------------------------------------
+
+1) VISÃO GERAL DA SOLUÇÃO
+Construímos dois modelos de IA e uma API REST (Flask) para consumo dos resultados por outros sistemas:
+
+1. Classificação – predição de risco de Burnout de colaboradores (saída binária 0/1).
+2. Regressão – predição do nível de Produtividade (saída contínua).
+
+Ambos foram desenvolvidos em notebooks (.ipynb) com pipeline completo (EDA, preparo dos dados, treino, avaliação e persistência dos modelos).
+
+2) DADOS UTILIZADOS
+Base: mental_health_workplace_survey.csv
+Tema: saúde mental e produtividade no ambiente de trabalho.
+Variáveis: idade, tempo de empresa, horas de trabalho, estresse, satisfação, sono, atividade física, apoio da liderança, etc.
+
+3) PIPELINE DE MACHINE LEARNING
+- EDA: estatísticas descritivas e correlações.
+- Preparação: codificação de categóricas e escalonamento.
+- Treino:
+  * Classificação: RandomForestClassifier.
+  * Regressão: XGBRegressor com features de interação.
+- Avaliação:
+  * Classificação: Acurácia, Matriz de Confusão.
+  * Regressão: MAE, MSE, R².
+- Persistência: modelos salvos em .pkl (pickle).
+
+4) RESULTADOS PRINCIPAIS
+Classificação – BurnoutRisk
+  Acurácia: 1.000
+  Relatório e matriz de confusão no notebook.
+
+Regressão – Produtividade
+  MAE: 0.26
+  MSE: 0.09
+  R²: -0.114
+O R² negativo foi interpretado como baixa correlação do alvo com as features, sem comprometer o objetivo didático.
+
+5) ARTEFATOS GERADOS
+- mental_health_workplace_survey.csv
+- MindTrack-IA.ipynb
+- modelo_classificacao_burnoutrisk.pkl
+- modelo_regressao_xgboost.pkl
+- app.py (API Flask)
+- INTEGRANTES.txt 
+
+6) API REST (FLASK)
+Endpoints:
+  GET / -> mensagem inicial
+  GET /health -> verifica carregamento dos modelos
+  POST /predict/classification -> recebe JSON com 'features' e retorna predição 0/1
+  POST /predict/regression -> recebe JSON e retorna valor previsto de produtividade
+
+7) COMO RODAR
+1. Criar ambiente virtual e instalar dependências:
+   python -m venv .venv
+   pip install -r requirements.txt
+
+2. Executar a API:
+   python app.py
+
+3. Testar via Postman:
+   GET http://127.0.0.1:8000/health
+
