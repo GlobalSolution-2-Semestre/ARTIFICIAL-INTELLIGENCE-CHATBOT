@@ -1,77 +1,91 @@
-ARTIFICIAL INTELLIGENCE & CHATBOT — Global Solution
+===========================================
+MINDTRACK - ARTIFICIAL INTELLIGENCE & CHATBOT
+INTEGRANTES DO GRUPO
+===========================================
 
-Integrantes:
-- Pedro Henrique Luiz Alves Duarte — RM563405 TURMA: 1TDSPF
-- Guilherme Macedo Martins         — RM562396 TURMA: 1TDSPF 
+Pedro Henrique Luiz Alves Duarte RM 563405 TURMA: 1TDSPF
+Guilherme Macedo Martins         RM 562396 TURMA: 1TDSPF
 
-Modelos:
-- Classificação: BurnoutRisk (RandomForest)
-- Regressão: ProductivityScore (XGBoost)
+===========================================
+DESCRIÇÃO GERAL DO PROJETO
+===========================================
 
-A API Flask expõe os endpoints:
-- /predict/burnout-risk
-- /predict/productivity
+A solução MindTrack utiliza dois modelos de Inteligência Artificial,
+um de Classificação e outro de Regressão, para analisar indicadores de 
+saúde mental, estresse ocupacional e produtividade de colaboradores.
 
----------------------------------------------------------EXPLICAÇÕES PERTINENTES----------------------------------------------------------------
+Os modelos foram treinados a partir de um dataset real de saúde mental 
+no ambiente de trabalho (mental_health_workplace_survey.csv), contendo 
+informações relacionadas à satisfação no trabalho, estresse, horas de 
+sono, atividade física, apoio do gestor, equilíbrio vida-trabalho, 
+produtividade, entre outros fatores.
 
-1) VISÃO GERAL DA SOLUÇÃO
-Construímos dois modelos de IA e uma API REST (Flask) para consumo dos resultados por outros sistemas:
+O objetivo é auxiliar empresas e profissionais a identificar riscos 
+potenciais de Burnout e entender como diferentes variáveis influenciam 
+a produtividade.
 
-1. Classificação – predição de risco de Burnout de colaboradores (saída binária 0/1).
-2. Regressão – predição do nível de Produtividade (saída contínua).
+===========================================
+MODELO 1 — CLASSIFICAÇÃO (BurnoutRisk)
+===========================================
 
-Ambos foram desenvolvidos em notebooks (.ipynb) com pipeline completo (EDA, preparo dos dados, treino, avaliação e persistência dos modelos).
+Tipo: Classificação Binária (0 = Sem risco, 1 = Risco de Burnout)
 
-2) DADOS UTILIZADOS
-Base: mental_health_workplace_survey.csv
-Tema: saúde mental e produtividade no ambiente de trabalho.
-Variáveis: idade, tempo de empresa, horas de trabalho, estresse, satisfação, sono, atividade física, apoio da liderança, etc.
+O modelo segue as etapas ensinadas nas apostilas da disciplina, 
+incluindo:
 
-3) PIPELINE DE MACHINE LEARNING
-- EDA: estatísticas descritivas e correlações.
-- Preparação: codificação de categóricas e escalonamento.
-- Treino:
-  * Classificação: RandomForestClassifier.
-  * Regressão: XGBRegressor com features de interação.
-- Avaliação:
-  * Classificação: Acurácia, Matriz de Confusão.
-  * Regressão: MAE, MSE, R².
-- Persistência: modelos salvos em .pkl (pickle).
+- Análise Exploratória
+- Separação das variáveis preditivas e alvo
+- Treinamento com train_test_split()
+- Padronização dos dados (StandardScaler)
+- Treinamento do algoritmo (ex.: RandomForestClassifier)
+- Avaliação com Matriz de Confusão e Classification Report
+- Salvamento do modelo em formato .pkl (modelo_classificacao_burnoutrisk.pkl)
 
-4) RESULTADOS PRINCIPAIS
-Classificação – BurnoutRisk
-  Acurácia: 1.000
-  Relatório e matriz de confusão no notebook.
+O resultado final permite prever se um colaborador apresenta ou não 
+risco de Burnout com base em 23 variáveis comportamentais, sociais e 
+profissionais.
 
-Regressão – Produtividade
-  MAE: 0.26
-  MSE: 0.09
-  R²: -0.114
-O R² negativo foi interpretado como baixa correlação do alvo com as features, sem comprometer o objetivo didático.
+===========================================
+MODELO 2 — REGRESSÃO (Produtividade)
+===========================================
 
-5) ARTEFATOS GERADOS
-- mental_health_workplace_survey.csv
-- MindTrack-IA.ipynb
+Tipo: Regressão Numérica (score mínimo a máximo de produtividade)
+
+Etapas conforme apostila:
+
+- Seleção das features de regressão
+- Engenharia de atributos simples
+- Normalização com StandardScaler
+- Treinamento com XGBRegressor
+- Avaliação com MAE, MSE e R²
+- Gráficos Real vs Previsto
+- Importância das variáveis
+- Salvamento em formato .pkl (modelo_produtividade.pkl)
+
+Este modelo prevê quanto um colaborador deve produzir, considerando 
+estresse, sono, carga de trabalho, atividade física, equilíbrio 
+vida-trabalho e suporte do gestor.
+
+===========================================
+API REST — FLASK
+===========================================
+
+Foi desenvolvida uma API Flask com duas rotas:
+
+1. /predict/burnout  → recebe 23 features e retorna 0 ou 1  
+2. /predict/produtividade → recebe as variáveis de regressão e retorna o valor previsto
+
+A API carrega automaticamente os modelos .pkl e o StandardScaler.  
+A aplicação também possui interface HTML integrada, permitindo testes 
+diretos via formulário.
+
+Arquivos envolvidos:
+- app.py
+- templates/predict.html
+- static/style.css
+- static/script.js
 - modelo_classificacao_burnoutrisk.pkl
-- modelo_regressao_xgboost.pkl
-- app.py (API Flask)
-- INTEGRANTES.txt 
-
-6) API REST (FLASK)
-Endpoints:
-  GET / -> mensagem inicial
-  GET /health -> verifica carregamento dos modelos
-  POST /predict/classification -> recebe JSON com 'features' e retorna predição 0/1
-  POST /predict/regression -> recebe JSON e retorna valor previsto de produtividade
-
-7) COMO RODAR
-1. Criar ambiente virtual e instalar dependências:
-   python -m venv .venv
-   pip install -r requirements.txt
-
-2. Executar a API:
-   python app.py
-
-3. Testar via Postman:
-   GET http://127.0.0.1:8000/health
+- modelo_produtividade.pkl
+- mental_health_synthetic.csv
+- scaler_prod
 
