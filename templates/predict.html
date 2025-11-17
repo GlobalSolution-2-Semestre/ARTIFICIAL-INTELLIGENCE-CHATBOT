@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>MindTrack IA</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/script.js" defer></script>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>MindTrack IA</h1>
+    <p>Preencha os dados de saúde e trabalho para prever risco de burnout e produtividade.</p>
+
+    <form method="POST" action="/predict">
+
+        <div class="grid">
+            <input type="number" min="0" max="10" name="StressLevel" placeholder="Nível de Estresse" required>
+            <input type="number" min="0" max="10" name="SleepHours" placeholder="Horas de Sono" required>
+            <input type="number" min="0" max="10" name="Workload" placeholder="Carga de Trabalho" required>
+            <input type="number" min="0" max="10" name="ManagerSupport" placeholder="Apoio do Gestor" required>
+            <input type="number" min="0" max="10" name="WorkLifeBalance" placeholder="Equilíbrio Vida-Trabalho" required>
+            <input type="number" min="0" max="10" name="PhysicalActivity" placeholder="Atividade Física" required>
+        </div>
+
+        <button class="btn" type="submit">Prever</button>
+    </form>
+
+    {% if burnout_risk is defined %}
+    <div class="result-box">
+        <h2>Resultados</h2>
+        <p><b>Risco de Burnout:</b>
+            {% if burnout_risk == 1 %}
+                <span class="danger">⚠ Alto risco</span>
+            {% else %}
+                <span class="safe">✔ Baixo risco</span>
+            {% endif %}
+        </p>
+
+        <p><b>Produtividade Prevista:</b> {{ productivity }}</p>
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <p class="error">{{ error }}</p>
+    {% endif %}
+</div>
+
+</body>
+</html>

@@ -9,116 +9,44 @@
 #   - Regressão: Predição do nível de Produtividade
 # ======================================================
 
-import os
-import json
-import pickle
+from flask import Flask, render_template, request
 import numpy as np
-import pandas as pd
-from flask import Flask, request, jsonify
+import pickle
 
-# ======================================================
-# Inicialização da aplicação Flask
-# ======================================================
 app = Flask(__name__)
 
-# ======================================================
-# Funções auxiliares
-# ======================================================
-
-def load_pickle(path):
-    """Carrega um arquivo pickle de forma segura."""
-    if os.path.exists(path):
-        with open(path, "rb") as f:
-            return pickle.load(f)
-    else:
-        print(f"⚠️ Arquivo não encontrado: {path}")
-        return None
-
-def response_ok(message, **extra):
-    """Retorna uma resposta JSON de sucesso."""
-    return jsonify({"status": "ok", "message": message, **extra}), 200
-
-def response_error(message, **extra):
-    """Retorna uma resposta JSON de erro."""
-    return jsonify({"status": "error", "message": message, **extra}), 400
-
-# ======================================================
-# Carregamento dos modelos
-# ======================================================
-
-CLASSIFICATION_PATH = "modelo_classificacao_burnoutrisk.pkl"
-REGRESSION_PATH = "modelo_regressao_xgboost.pkl"
-
-classification_model = load_pickle(CLASSIFICATION_PATH)
-regression_model = load_pickle(REGRESSION_PATH)
-
-print("🧠 Status de carregamento dos modelos:")
-print(f" - Classificação carregado: {classification_model is not None}")
-print(f" - Regressão carregado: {regression_model is not None}")
-
-# ======================================================
-# Rotas básicas
-# ======================================================
+model_burnout = pickle.load(open("modelo_burnout.pkl", "rb"))
+model_prod = pickle.load(open("modelo_produtividade.pkl", "rb"))
+scaler = pickle.load(open("scaler_prod.pkl", "rb"))
 
 @app.route("/", methods=["GET"])
 def home():
-    """Rota inicial da API."""
-    return response_ok("API Flask para Burnout (classificação) e Produtividade (regressão).")
+    return render_template("predict.html")
 
-@app.route("/health", methods=["GET"])
-def health_check():
-    """Verifica se a API e os modelos estão ativos."""
-    return jsonify({
-        "status": "ok",
-        "message": "alive",
-        "classification_loaded": classification_model is not None,
-        "regression_loaded": regression_model is not None
-    })
-
-# ======================================================
-# Rota de predição - Classificação (Burnout)
-# ======================================================
-
-@app.route("/predict/classification", methods=["POST"])
-def predict_classification():
-    """Predição de risco de Burnout."""
-    if classification_model is None:
-        return response_error("Modelo de classificação não carregado.")
-
-    data = request.get_json()
-    if not data:
-        return response_error("Nenhum dado recebido.")
-
+@app.route("/predict", methods=["POST"])
+def predict():
     try:
-        features = np.array(data["features"]).reshape(1, -1)
-        prediction = classification_model["model"].predict(features)[0]
-        return response_ok("Predição realizada com sucesso.", prediction=int(prediction))
+        fields = [
+            "StressLevel", "SleepHours", "Workload",
+            "ManagerSupport", "WorkLifeBalance", "PhysicalActivity"
+        ]
+
+        values = [float(request.form[f]) for f in fields]
+
+        # Classificação
+        pred_burnout = model_burnout.predict([values])[0]
+
+        # Regressão
+        X_scaled = scaler.transform([values])
+        prod = float(model_prod.predict(X_scaled)[0])
+
+        return render_template(
+            "predict.html",
+            burnout_risk=pred_burnout,
+            productivity=round(prod, 2)
+        )
     except Exception as e:
-        return response_error(f"Erro ao realizar predição: {e}")
+        return render_template("predict.html", error=str(e))
 
-# ======================================================
-# Rota de predição - Regressão (Produtividade)
-# ======================================================
-
-@app.route("/predict/regression", methods=["POST"])
-def predict_regression():
-    """Predição de nível de produtividade."""
-    if regression_model is None:
-        return response_error("Modelo de regressão não carregado.")
-
-    data = request.get_json()
-    if not data:
-        return response_error("Nenhum dado recebido.")
-
-    try:
-        features = np.array(data["features"]).reshape(1, -1)
-        prediction = regression_model["model"].predict(features)[0]
-        return response_ok("Predição realizada com sucesso.", prediction=float(prediction))
-    except Exception as e:
-        return response_error(f"Erro ao realizar predição: {e}")
-
-# ======================================================
-# Inicialização da API
-# ======================================================
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=8000, debug=True)
+    app.run(port=8000, debug=True)
