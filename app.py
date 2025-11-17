@@ -1,13 +1,9 @@
 # ======================================================
 # MINDTRACK-IA - API Flask (Classificação e Regressão)
 # ======================================================
-# Pedro Henrique Luiz Alves Duarte
-# Guilherme Macedo Martins
-# Descrição:
-# API Flask que expõe dois modelos de IA:
-#   - Classificação: Predição de risco de Burnout
-#   - Regressão: Predição do nível de Produtividade
-# ======================================================
+# Pedro Henrique Luiz Alves Duarte RM 563405
+# Guilherme Macedo Martins RM562396
+
 
 from flask import Flask, render_template, request
 import numpy as np
@@ -50,3 +46,4 @@ def predict():
 
 if __name__ == "__main__":
     app.run(port=8000, debug=True)
+    
