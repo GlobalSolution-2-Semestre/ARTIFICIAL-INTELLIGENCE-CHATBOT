@@ -6,6 +6,7 @@ INTEGRANTES DO GRUPO
 Pedro Henrique Luiz Alves Duarte RM 563405 TURMA: 1TDSPF
 Guilherme Macedo Martins         RM 562396 TURMA: 1TDSPF
 
+
 ===========================================
 DESCRIÇÃO GERAL DO PROJETO
 ===========================================
@@ -24,68 +25,122 @@ O objetivo é auxiliar empresas e profissionais a identificar riscos
 potenciais de Burnout e entender como diferentes variáveis influenciam 
 a produtividade.
 
+
 ===========================================
 MODELO 1 — CLASSIFICAÇÃO (BurnoutRisk)
 ===========================================
 
 Tipo: Classificação Binária (0 = Sem risco, 1 = Risco de Burnout)
 
-O modelo segue as etapas ensinadas nas apostilas da disciplina, 
-incluindo:
+O modelo segue as etapas ensinadas nas apostilas da disciplina, incluindo:
 
 - Análise Exploratória
 - Separação das variáveis preditivas e alvo
 - Treinamento com train_test_split()
 - Padronização dos dados (StandardScaler)
-- Treinamento do algoritmo (ex.: RandomForestClassifier)
+- Treinamento do algoritmo (RandomForestClassifier)
 - Avaliação com Matriz de Confusão e Classification Report
-- Salvamento do modelo em formato .pkl (modelo_classificacao_burnoutrisk.pkl)
+- Salvamento do modelo em .pkl (modelo_burnout.pkl)
 
-O resultado final permite prever se um colaborador apresenta ou não 
-risco de Burnout com base em 23 variáveis comportamentais, sociais e 
-profissionais.
+O modelo prevê se um colaborador apresenta risco de Burnout com base
+em variáveis comportamentais, sociais e profissionais.
+
 
 ===========================================
 MODELO 2 — REGRESSÃO (Produtividade)
 ===========================================
 
-Tipo: Regressão Numérica (score mínimo a máximo de produtividade)
+Tipo: Regressão Numérica (previsão de produtividade)
 
-Etapas conforme apostila:
+Etapas conforme apostilas:
 
-- Seleção das features de regressão
-- Engenharia de atributos simples
+- Seleção das features relevantes
+- Engenharia de atributos
 - Normalização com StandardScaler
 - Treinamento com XGBRegressor
 - Avaliação com MAE, MSE e R²
-- Gráficos Real vs Previsto
-- Importância das variáveis
-- Salvamento em formato .pkl (modelo_produtividade.pkl)
+- Análise da importância das variáveis
+- Salvamento do modelo em .pkl (modelo_produtividade.pkl)
 
-Este modelo prevê quanto um colaborador deve produzir, considerando 
-estresse, sono, carga de trabalho, atividade física, equilíbrio 
-vida-trabalho e suporte do gestor.
+O modelo estima o nível de produtividade com base em fatores como:
+estresse, sono, carga de trabalho, equilíbrio vida-trabalho e apoio
+gerencial.
+
 
 ===========================================
 API REST — FLASK
 ===========================================
 
-Foi desenvolvida uma API Flask com duas rotas:
+A aplicação possui rotas configuradas para prever:
 
-1. /predict/burnout  → recebe 23 features e retorna 0 ou 1  
-2. /predict/produtividade → recebe as variáveis de regressão e retorna o valor previsto
-
-A API carrega automaticamente os modelos .pkl e o StandardScaler.  
-A aplicação também possui interface HTML integrada, permitindo testes 
-diretos via formulário.
+1. /predict → formulário HTML para interface gráfica
+2. /predict/burnout → retorno JSON (opcional)
+3. /predict/produtividade → retorno JSON (opcional)
 
 Arquivos envolvidos:
-- app.py
-- templates/predict.html
+
+- app.py (API Flask)
+- templates/predict.html (interface)
 - static/style.css
 - static/script.js
-- modelo_classificacao_burnoutrisk.pkl
+- modelo_burnout.pkl
 - modelo_produtividade.pkl
+- scaler_prod.pkl
 - mental_health_synthetic.csv
-- scaler_prod
 
+
+===========================================
+COMO EXECUTAR A APLICAÇÃO (PASSO A PASSO)
+===========================================
+
+1) Criar o ambiente virtual:
+--------------------------------
+python -m venv venv
+
+2) Ativar o ambiente virtual:
+--------------------------------
+Windows:
+venv\Scripts\activate
+
+Linux/Mac:
+source venv/bin/activate
+
+3) Instalar as dependências:
+--------------------------------
+pip install -r requirements.txt
+
+4) Verificar estrutura da pasta:
+--------------------------------
+MindTrack/
+│ app.py
+│ modelo_burnout.pkl
+│ modelo_produtividade.pkl
+│ scaler_prod.pkl
+│ mental_health_synthetic.csv
+│ requirements.txt
+│
+├── templates/
+│     predict.html
+│
+└── static/
+      style.css
+      script.js
+
+5) Rodar a aplicação:
+--------------------------------
+python app.py
+
+6) Abrir no navegador:
+--------------------------------
+http://127.0.0.1:8000/
+ou
+http://localhost:8000/
+
+7) Preencher os valores (0 a 10) e obter:
+--------------------------------
+- Risco de Burnout
+- Produtividade Prevista
+
+===========================================
+FIM DO DOCUMENTO
+===========================================

@@ -16,12 +16,25 @@
     <form method="POST" action="/predict">
 
         <div class="grid">
-            <input type="number" min="0" max="10" name="StressLevel" placeholder="Nível de Estresse" required>
-            <input type="number" min="0" max="10" name="SleepHours" placeholder="Horas de Sono" required>
-            <input type="number" min="0" max="10" name="Workload" placeholder="Carga de Trabalho" required>
-            <input type="number" min="0" max="10" name="ManagerSupport" placeholder="Apoio do Gestor" required>
-            <input type="number" min="0" max="10" name="WorkLifeBalance" placeholder="Equilíbrio Vida-Trabalho" required>
-            <input type="number" min="0" max="10" name="PhysicalActivity" placeholder="Atividade Física" required>
+
+            <input type="number" min="0" max="10" name="StressLevel"
+                   placeholder="Nível de Estresse (0 a 10)" required>
+
+            <input type="number" min="0" max="10" name="SleepHours"
+                   placeholder="Horas de Sono (0 a 10)" required>
+
+            <input type="number" min="0" max="10" name="Workload"
+                   placeholder="Carga de Trabalho (0 a 10)" required>
+
+            <input type="number" min="0" max="10" name="ManagerSupport"
+                   placeholder="Apoio do Gestor (0 a 10)" required>
+
+            <input type="number" min="0" max="10" name="WorkLifeBalance"
+                   placeholder="Equilíbrio Vida-Trabalho (0 a 10)" required>
+
+            <input type="number" min="0" max="10" name="PhysicalActivity"
+                   placeholder="Atividade Física (0 a 10)" required>
+
         </div>
 
         <button class="btn" type="submit">Prever</button>
@@ -30,7 +43,9 @@
     {% if burnout_risk is defined %}
     <div class="result-box">
         <h2>Resultados</h2>
-        <p><b>Risco de Burnout:</b>
+
+        <p>
+            <b>Risco de Burnout:</b>
             {% if burnout_risk == 1 %}
                 <span class="danger">Alto risco</span>
             {% else %}
@@ -43,7 +58,7 @@
     {% endif %}
 
     {% if error %}
-    <p class="error">{{ error }}</p>
+        <p class="error">{{ error }}</p>
     {% endif %}
 </div>
 
